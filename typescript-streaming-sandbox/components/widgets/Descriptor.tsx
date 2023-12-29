@@ -2,6 +2,7 @@ import { Emotion } from "../../lib/data/emotion";
 import { None } from "../../lib/utilities/typeUtilities";
 import { getEmotionDescriptor } from "../../lib/utilities/emotionUtilities";
 import { useStableEmotions } from "../../lib/hooks/stability";
+import * as XLSX from 'xlsx'; // Import the xlsx library
 
 type DescriptorProps = {
   className?: string;
@@ -37,6 +38,18 @@ export function Descriptor({ className, emotions }: DescriptorProps) {
     return `${secondaryDescriptor} ${primaryEmotion.name}`;
   }
 
+  function handleDownloadData() {
+    const dataToExport = emotions.map((emotion) => ({
+      Name: emotion.name,
+      Score: emotion.score,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "EmotionData");
+    XLSX.writeFile(wb, "emotion_data.xlsx");
+  }
+
   return (
     <div className={`${className} flex`}>
       {emotions.length > 0 && (
@@ -45,7 +58,20 @@ export function Descriptor({ className, emotions }: DescriptorProps) {
           <div className="w-48 bg-neutral-800 px-4 py-2 text-center lowercase text-white">
             <span>{createDescription(stableEmotions)}</span>
           </div>
-          <div className="flex justify-center rounded-r-full bg-white py-2 px-3 font-medium text-neutral-800"></div>
+         
+          <div className="w-48 bg-neutral-800 px-4 py-2 text-center lowercase text-white" style={{
+            backgroundColor:"green",
+            marginLeft:"10px",
+            borderRadius:"10px"
+          }}>
+
+            <button
+              onClick={handleDownloadData}
+              className="cursor-pointer focus:outline-none"
+            >
+              Download Data
+            </button>
+          </div>
         </div>
       )}
     </div>
