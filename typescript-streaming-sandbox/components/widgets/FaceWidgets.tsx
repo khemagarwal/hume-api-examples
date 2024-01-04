@@ -12,6 +12,7 @@ import { TrackedFace } from "../../lib/data/trackedFace";
 import { VideoRecorder } from "../../lib/media/videoRecorder";
 import { blobToBase64 } from "../../lib/utilities/blobUtilities";
 import { getApiUrlWs } from "../../lib/utilities/environmentUtilities";
+import { AudioWidgets } from "./AudioWidgets";
 
 type FaceWidgetsProps = {
   onCalibrate: Optional<(emotions: Emotion[]) => void>;
@@ -237,8 +238,13 @@ export function FaceWidgets({ onCalibrate }: FaceWidgetsProps) {
           width={500}
           height={375}
         />
+        <div style={{
+          display:"flex"
+        }}>
         {!onCalibrate && (
           <div className="ml-10">
+           <h1>Face expression analysis</h1>
+
             <TopEmotions emotions={emotions} />
             <LoaderSet
               className="mt-8 ml-5"
@@ -246,9 +252,22 @@ export function FaceWidgets({ onCalibrate }: FaceWidgetsProps) {
               emotions={emotions}
               numLevels={numLoaderLevels}
             />
-            <Descriptor className="mt-8" emotions={emotions} />
+              <Descriptor className="mt-8" emotions={emotions} />
+        
+           
+   
           </div>
         )}
+
+<div style={{
+  marginLeft:"30px"
+}} >
+           <h1>Speech analysis</h1>
+
+<AudioWidgets modelName="prosody" recordingLengthMs={500} streamWindowLengthMs={5000} />
+</div>
+
+</div>
       </div>
 
       <div className="pt-6">{status}</div>
