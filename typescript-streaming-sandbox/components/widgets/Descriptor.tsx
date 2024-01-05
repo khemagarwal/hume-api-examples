@@ -223,6 +223,13 @@ const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedo
 
 // Save file in the browser
 saveAs(blob, 'emotion_data.xlsx');
+
+// After the PNG is downloaded
+const newWindow = window.open("", "_blank");
+const wordCloudDiv = document.getElementById("word-cloud").cloneNode(true);
+wordCloudDiv.style.marginTop = "-400px"; // Change the marginTop property
+newWindow.document.body.appendChild(wordCloudDiv);
+
 }
 
   return (
