@@ -243,7 +243,7 @@ export function FaceWidgets({ onCalibrate }: FaceWidgetsProps) {
         }}>
         {!onCalibrate && (
           <div className="ml-10">
-           <h1>Face expression analysis</h1>
+           <div className="pb-6 text-2xl font-medium text-neutral-800">Face expression analysis</div>
 
             <TopEmotions emotions={emotions} />
             <LoaderSet
@@ -262,7 +262,7 @@ export function FaceWidgets({ onCalibrate }: FaceWidgetsProps) {
 <div style={{
   marginLeft:"30px"
 }} >
-           <h1>Speech analysis</h1>
+            <div className="pb-6 text-2xl font-medium text-neutral-800">Speech analysis</div>
 
 <AudioWidgets modelName="prosody" recordingLengthMs={500} streamWindowLengthMs={5000} />
 </div>

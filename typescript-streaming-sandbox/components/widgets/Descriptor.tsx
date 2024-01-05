@@ -120,7 +120,7 @@ for (let i = 2; i <= columnKeys.length; i++) {
 }
 
 // Filter out keys where the average is zero and sort the remaining keys
-let sortedKeys = Object.keys(averages)
+const sortedKeys = Object.keys(averages)
   .filter(key => averages[key] !== 0)
   .sort((a, b) => averages[b] - averages[a]);
 
@@ -145,7 +145,7 @@ sortedKeys.forEach((key, columnIndex) => {
 
 // for word cloud start
 
-sortedKeys = Object.keys(averages).sort((a, b) => averages[b] - averages[a]);
+// sortedKeys = Object.keys(averages).sort((a, b) => averages[b] - averages[a]);
 // Calculate the min and max average values
 const minAvg = d3.min(Object.values(averages));
 const maxAvg = d3.max(Object.values(averages));
@@ -177,8 +177,6 @@ const layout = cloud()
 .on("end", draw);
 
 function draw(words) {
-// Remove any existing SVGs
-d3.select("#word-cloud").selectAll("svg").remove();
 
 // Append a new SVG
 d3.select("#word-cloud").append("svg")
@@ -201,6 +199,7 @@ layout.start();
 
 // Convert the word cloud to an image and download it
 const node = document.getElementById('word-cloud');
+console.log("khttm",node.innerHTML);
 domtoimage.toPng(node)
 .then(function (dataUrl) {
 const link = document.createElement('a');
@@ -236,7 +235,7 @@ saveAs(blob, 'emotion_data.xlsx');
           </div>
          
           <div className="w-48 bg-neutral-800 px-4 py-2 text-center lowercase text-white" style={{
-            backgroundColor:"green",
+           backgroundColor: isStarted ? 'red' : 'green', 
             marginLeft:"10px",
             borderRadius:"10px"
           }}>
@@ -267,13 +266,11 @@ saveAs(blob, 'emotion_data.xlsx');
       )}
 
 <div style={{
-  width: "1px",
-  height: "1px",
   position: "absolute",
   top: "100%",
   left: "50%",
   transform: "translate(-50%, -50%) rotate(-90deg)",
-  marginTop: "40px"
+  marginTop: "-9999px",
 }} id="word-cloud"></div>
 
     </div>
