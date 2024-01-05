@@ -15,7 +15,9 @@ export function TopEmotions({ className, emotions, numEmotions }: TopEmotionsPro
         .sort((a: Emotion, b: Emotion) => b.score - a.score)
         .slice(0, numEmotions)
         .map((emotion, i) => (
-          <div key={i} className="mb-3 flex rounded-full border border-neutral-200 text-sm shadow">
+          <div style={{
+            width:"fit-content"
+          }}  key={i} className="mb-3 flex rounded-full border border-neutral-200 text-sm shadow">
             <div className="flex w-10 justify-center rounded-l-full bg-white py-2 pl-5 pr-4 font-medium text-neutral-800">
               <span>{i + 1}</span>
             </div>
