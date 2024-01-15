@@ -2,12 +2,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import styles from './GazeTrackingWidget.module.css';
 import interviewGuy from './interview_guy.jpg';
 
+// Define the type for a gaze point with x, y coordinates and duration.
 type GazePoint = {
     x: number;
     y: number;
     duration: number;
 };
 
+// Extending the global window object to include GazeCloudAPI.
 declare global {
     interface Window {
         GazeCloudAPI: any;
@@ -15,22 +17,30 @@ declare global {
 }
 
 const GazeTrackingWidget = () => {
+    // State to store gaze points.
     const [gazePoints, setGazePoints] = useState<GazePoint[]>([]);
+    // Ref to track if the system has been calibrated.
     const isCalibratedRef = useRef(false);
+    // State to control the visibility of camera and meeting buttons.
     const [showCameraAndMeetingButtons, setShowCameraAndMeetingButtons] = useState(true);
+    // State to track if the gaze tracking has been stopped.
     const [trackingStopped, setTrackingStopped] = useState(false);
 
+    // Effect hook to load and setup the GazeCloudAPI script.
     useEffect(() => {
+        // Handler for script errors.
         const handleScriptError = (msg: string) => {
             console.error('Script error:', msg);
         };
 
+        // Function to process gaze data.
         const processGaze = (GazeData: any) => {
             if (!isCalibratedRef.current || trackingStopped) return;
 
             const x = GazeData.docX;
             const y = GazeData.docY;
 
+            // Update gaze points state by adding new points or updating existing ones.
             setGazePoints(prevPoints => {
                 let pointUpdated = false;
                 const updatedPoints = prevPoints.map(point => {
@@ -48,6 +58,7 @@ const GazeTrackingWidget = () => {
                 return updatedPoints;
             });
 
+            // Update the gaze element's position on the screen.
             const gaze = document.getElementById("gaze");
             if (gaze) {
                 gaze.style.left = `${x}px`;
@@ -56,11 +67,13 @@ const GazeTrackingWidget = () => {
             }
         };
 
+        // Load the GazeCloudAPI script dynamically if window is defined.
         if (typeof window !== "undefined") {
             const script = document.createElement('script');
             script.src = 'https://api.gazerecorder.com/GazeCloudAPI.js';
             script.async = true;
 
+            // Setup event handlers for the GazeCloudAPI script.
             script.onload = () => {
                 window.GazeCloudAPI.OnCalibrationComplete = () => {
                     isCalibratedRef.current = true;
@@ -74,9 +87,11 @@ const GazeTrackingWidget = () => {
 
             script.onerror = () => handleScriptError('Script loading error!');
 
+            // Append the script to the body of the document.
             document.body.appendChild(script);
         }
 
+        // Cleanup function to stop eye tracking when the component unmounts.
         return () => {
             if (window.GazeCloudAPI) {
                 window.GazeCloudAPI.StopEyeTracking();
@@ -84,21 +99,24 @@ const GazeTrackingWidget = () => {
         };
     }, []);
 
+    // Function to start gaze tracking.
     const startTracking = () => {
         window.GazeCloudAPI.StartEyeTracking();
         setTrackingStopped(false);
     };
 
+    // Function to stop gaze tracking.
     const stopTracking = () => {
         window.GazeCloudAPI.StopEyeTracking();
         setTrackingStopped(true);
     };
 
+    // Main component rendering.
     return (
         <div style={{
             position: 'relative',
-            height: '100vh',
-            width: '100vw',
+            height: '80vh',
+            width: '90vw',
             backgroundImage: isCalibratedRef.current ? `url(${interviewGuy.src})` : 'none',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
@@ -107,7 +125,7 @@ const GazeTrackingWidget = () => {
             {showCameraAndMeetingButtons && (
                 <>
                     <button className={styles.fancyButton}>Connect to Camera</button>
-                    <button className={styles.fancyButton}>Connect to Zoom/Google Meet</button>
+                    {/* <button className={styles.fancyButton}>Connect to Zoom/Google Meet</button> */}
                 </>
             )}
 
@@ -129,9 +147,10 @@ const GazeTrackingWidget = () => {
                 </button>
             )}
 
+            {/* Gaze indicator element */}
             <div id="gaze" style={{
                 position: 'absolute',
-                display: isCalibratedRef.current && !trackingStopped ? 'block' : 'none', // Show gaze only when calibrated and tracking is ongoing
+                display: isCalibratedRef.current && !trackingStopped ? 'block' : 'none',
                 width: '100px',
                 height: '100px',
                 borderRadius: '50%',
@@ -141,6 +160,7 @@ const GazeTrackingWidget = () => {
                 zIndex: 999999
             }}></div>
 
+            {/* Render gaze points */}
             {isCalibratedRef.current && gazePoints.map((point, index) => (
                 <div key={index} style={{
                     position: 'absolute',
